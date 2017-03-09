@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/PlatformDetector">
+        <file alias="tabIcon">img/logcheck.png</file>
+        <file alias="settings">img/settings.png</file>
+        <file alias="blue_ball">img/Circle_Blue.png</file>
+    </qresource>
+</RCC>
