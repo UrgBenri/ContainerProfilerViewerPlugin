@@ -74,9 +74,11 @@ public slots:
     void addSquare(const QRect &rect, const QColor &color);
     void addLine(const QLineF &line, int thickness, const QColor &color);
     void addCircle(const QPointF &center, qreal radius, const QColor &color);
+     void addText(const QString &text, const QPointF &position, const QColor &color, int fontSize);
     void clearSquares();
     void clearLines();
-    void clearCircles();
+    void clearCircles();    
+    void clearTexts();
 
     void addGrid(const QRect &rect, const QSize &cellSize, long timestamp);
     void addSensorData(long timestamp
@@ -174,6 +176,7 @@ private:
     DrawItem m_circles;
     DrawItem m_grids;
     DrawItem m_rulers;
+    DrawItem m_texts;
 
     bool m_showAxis;
     qreal m_pixel_per_mm;
@@ -205,7 +208,8 @@ private:
     void drawText();
     void drawIntensity();
     void drawData();
-    void drawSquares();
+    void drawSquares();    
+    void drawTexts();
     void drawLines();
     void drawCircles();
     void drawGrids();
@@ -213,6 +217,7 @@ private:
     QPointF drawOffset(qreal zoom_ratio);
     void updateTextMessages();
     QPointF getRealPoint(const QPointF &position);
+    QPointF getCanvasPoint(const QPointF &position);
     void updateMousePositionLabel(const QPointF &position);
 };
 

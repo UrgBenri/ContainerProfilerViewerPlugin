@@ -18,47 +18,32 @@
 
 */
 
-#ifndef PLATFORMDETECTOR_H
-#define PLATFORMDETECTOR_H
+#ifndef CONTAINERPROFILER_H
+#define CONTAINERPROFILER_H
 
 #include <QWidget>
-#include "PlatformChecker.h"
 #include "ViewerPluginInterface.h"
-#include "GenericTableModel.h"
-#include "SettingTargetInterface.h"
-#include "ResultHistoryGraph.h"
 
 using namespace std;
-using namespace qrk;
 
 namespace Ui
 {
-class PlatformDetector;
+class ContainerProfilerViewerPlugin;
 }
 
-class PlatformSettingDialog;
-
-class PlatformDetectorViewerPlugin : public ViewerPluginInterface, public SettingTargetInterface
+class ContainerProfilerViewerPlugin : public ViewerPluginInterface
 {
     Q_OBJECT
     Q_INTERFACES(ViewerPluginInterface)
-    Q_PLUGIN_METADATA(IID "org.kristou.UrgBenri.PlatformDetectorViewerPlugin")
-    PLUGIN_FACTORY(PlatformDetectorViewerPlugin)
+    Q_PLUGIN_METADATA(IID "org.kristou.UrgBenri.ContainerProfilerViewerPlugin")
+    PLUGIN_FACTORY(ContainerProfilerViewerPlugin)
 public:
-    explicit PlatformDetectorViewerPlugin(QWidget* parent = 0);
-    virtual ~PlatformDetectorViewerPlugin();
-//    void findHome(QVector<long> &data, const RangeSensor* sensor, long timeStamp, long playPosition);
+    explicit ContainerProfilerViewerPlugin(QWidget* parent = 0);
+    virtual ~ContainerProfilerViewerPlugin();
 
-//    bool addRanges(const SensorDataArray &ranges, long timestamp);
-//    bool addLevels(const SensorDataArray &levels, long timestamp);
-//    bool addSensorData(const SensorDataArray &ranges
-//                           , const SensorDataArray &levels
-//                           , long timestamp);
-
-
-    QString pluginName() const { return tr("Platform Detector"); }
-    QIcon pluginIcon() const{ return QIcon(":/PlatformDetector/tabIcon"); }
-    QString pluginDescription() const {return tr("Platform detection with pattern matching");}
+    QString pluginName() const { return tr("Contaner Profiler"); }
+    QIcon pluginIcon() const{ return QIcon(":/ContainerProfilerViewerPlugin/tabIcon"); }
+    QString pluginDescription() const {return tr("Container Profiter");}
     PluginVersion pluginVersion() const {return PluginVersion(1, 0, 0);}
     QString pluginAuthorName() const {return "Mehrez Kristou";}
     QString pluginAuthorContact() const {return "mehrez@kristou.com";}
@@ -73,14 +58,6 @@ public:
 
     void loadTranslator(const QString &locale);
 
-    void setRotationOffset(int rotation);
-    void setGrid(int minX_, int maxX_, int minY_, int maxY_, int precisionX_, int precisionY_);
-    void setHistoryLength(int historyLength);
-    void setConfigFilename(const QString &value);
-    void setSaveFilename(const QString &value);
-    void setAreaNumber(int value);
-
-    void resetDetection();
 
 public slots:
     void addMeasurementData(const QString &id
@@ -95,24 +72,12 @@ protected:
     void changeEvent(QEvent* e);
     void hideEvent(QHideEvent *);
 
-private:
-    Ui::PlatformDetector* ui;
-    PlatformChecker pc;
-    PlatformSettingDialog *m_settings;
-    GenericTableModel *m_tableModel;
-    ResultHistoryGraph *m_resultHistory;
-
-
-//    QVector<double> pos, posVar, pos1, posVar1;
-//    double m_playPosition;
-//    int m_historyLength;
-    bool right;
-
 private slots:
-    void loadFile();
-    bool rightToggeled(bool state);
     void orthoMouseClicked(bool state, long x, long y, int step);
+
+private:
+    Ui::ContainerProfilerViewerPlugin* ui;
 };
 
-#endif // PLATFORMDETECTOR_H
+#endif // CONTAINERPROFILER_H
 

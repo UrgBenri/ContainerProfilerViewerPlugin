@@ -35,3 +35,9 @@
         $$PWD/items/CircleItem.h \
         $$PWD/items/RulerItem.h
 }
+
+HEADERS += \
+    $$PWD/items/TextItem.h
+
+SOURCES += \
+    $$PWD/items/TextItem.cpp

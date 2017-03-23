@@ -34,6 +34,7 @@
 #include "CircleItem.h"
 #include "GridItem.h"
 #include "RulerItem.h"
+#include "TextItem.h"
 
 namespace
 {
@@ -199,6 +200,7 @@ void UrgDrawWidget::clear(void)
     m_lines.clear();
     m_circles.clear();
     m_rulers.clear();
+    m_texts.clear();
     redraw();
 }
 
@@ -245,6 +247,13 @@ void UrgDrawWidget::addCircle(const QPointF &center, qreal radius, const QColor 
     redraw();
 }
 
+void UrgDrawWidget::addText(const QString &text, const QPointF &position, const QColor &color, int fontSize)
+{
+    QPointF scenePos = getCanvasPoint(position);
+    m_texts.addData(new TextItem(this, text, scenePos.toPoint(), fontSize, color));
+    redraw();
+}
+
 void UrgDrawWidget::clearSquares()
 {
     m_squares.clear();
@@ -260,6 +269,12 @@ void UrgDrawWidget::clearLines()
 void UrgDrawWidget::clearCircles()
 {
     m_circles.clear();
+    redraw();
+}
+
+void UrgDrawWidget::clearTexts()
+{
+    m_texts.clear();
     redraw();
 }
 
@@ -526,6 +541,8 @@ void UrgDrawWidget::paintGL(void)
 
     drawCircles();
 
+    drawTexts();
+
     drawRuler();
 
     drawText();
@@ -691,6 +708,14 @@ QPointF UrgDrawWidget::getRealPoint(const QPointF &position)
     return QPointF(x_mm, y_mm);
 }
 
+QPointF UrgDrawWidget::getCanvasPoint(const QPointF &position)
+{
+    qreal center_x = width() / 2.0;
+    qreal center_y = height() / 2.0;
+    qreal x_mm = ((position.x() + m_view_center.x()) / m_pixel_per_mm) + center_x;
+    qreal y_mm = center_y - ((position.y() + m_view_center.y()) / m_pixel_per_mm);
+    return QPointF(x_mm, y_mm);
+}
 
 void UrgDrawWidget::wheelEvent(QWheelEvent* event)
 {
@@ -876,6 +901,19 @@ void UrgDrawWidget::drawSquares(void)
         m_squares.drawPolygon(zoomRatio(), drawOffset(zoomRatio()), m_selectedStep);
     }
     m_squares.drawPoints(zoomRatio(), drawOffset(zoomRatio()), m_selectedStep);
+}
+
+void UrgDrawWidget::drawTexts()
+{
+    if(m_texts.size() == 0) return;
+
+    if (m_currentDrawMode == Lines) {
+        m_texts.drawLines(zoomRatio(), drawOffset(zoomRatio()), m_selectedStep);
+    }
+    else if (m_currentDrawMode == Polygon) {
+        m_texts.drawPolygon(zoomRatio(), drawOffset(zoomRatio()), m_selectedStep);
+    }
+    m_texts.drawPoints(zoomRatio(), drawOffset(zoomRatio()), m_selectedStep);
 }
 
 void UrgDrawWidget::drawLines()

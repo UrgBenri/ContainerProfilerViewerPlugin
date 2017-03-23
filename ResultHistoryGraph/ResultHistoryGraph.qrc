@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/ResultHistoryGraph">
-        <file alias="blue_led">img/Circle_Blue.png</file>
-    </qresource>
-</RCC>

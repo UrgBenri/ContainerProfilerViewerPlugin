@@ -66,11 +66,18 @@ void SquareItem::drawPoints(qreal drawSize
     double x4 = m_rect.x() * zoom_ratio;
     double y4 = (m_rect.y() + m_rect.height()) * zoom_ratio;
 
-    glBegin(GL_QUADS);
+    glBegin(GL_LINES);
     glVertex2d(x1 - offset.x(), y1 - offset.y());
     glVertex2d(x2 - offset.x(), y2 - offset.y());
+
+    glVertex2d(x2 - offset.x(), y2 - offset.y());
+    glVertex2d(x3 - offset.x(), y3 - offset.y());
+
     glVertex2d(x3 - offset.x(), y3 - offset.y());
     glVertex2d(x4 - offset.x(), y4 - offset.y());
+
+    glVertex2d(x4 - offset.x(), y4 - offset.y());
+    glVertex2d(x1 - offset.x(), y1 - offset.y());
     glEnd();
     glFlush();
 
