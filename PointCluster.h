@@ -7,6 +7,7 @@
 
 typedef struct {
     QPointF location;
+    long level;
     unsigned int index;
 } Point;
 

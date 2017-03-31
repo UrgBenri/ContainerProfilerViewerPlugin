@@ -50,6 +50,13 @@ ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
 
     connect(ui->plotViewer, &UrgDrawWidget::positionClicked,
             this, &ContainerProfilerViewerPlugin::orthoMouseClicked);
+
+    connect(ui->orthoZoominButton, &QAbstractButton::clicked,
+            ui->plotViewer, &UrgDrawWidget::largerZoom);
+    connect(ui->orthoZzoomoutButton, &QAbstractButton::clicked,
+            ui->plotViewer, &UrgDrawWidget::smallerZoom);
+    connect(ui->orthoZoomfitButton, &QAbstractButton::clicked,
+            ui->plotViewer, &UrgDrawWidget::initializeView);
 }
 
 void ContainerProfilerViewerPlugin::orthoMouseClicked(bool state, long x, long y, int step)
@@ -64,9 +71,12 @@ void ContainerProfilerViewerPlugin::orthoMouseClicked(bool state, long x, long y
 void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const PluginDataStructure &data)
 {
     int minLength = 100;
-    int maxLength = 1470;
+    int maxLength = 1485;
     int width = 695 *2;
+    int maxGrouping = 15;
+    int minGroupCount = 20;
     UrgDrawWidget *plotter =  ui->plotViewer;
+
 
     plotter->clear();
 
@@ -81,13 +91,15 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
 
     //convert point from 3D to 2D with first echo
     points.resize(rawPoints.size());
+    QVector<QVector<long > > levels = data.levels;
     std::transform(rawPoints.begin(), rawPoints.end(), points.begin()
-                   , [&rawPoints](const QVector<QVector3D> &rawPoint) -> Point{
+                   , [&rawPoints, levels](const QVector<QVector3D> &rawPoint) -> Point{
         Point result;
         if(rawPoint.size() > 0){
             result.location =  QPointF(rawPoint[0].x(), rawPoint[0].y());
         }
         result.index = std::find(rawPoints.begin(), rawPoints.end(), rawPoint) - rawPoints.begin();
+        result.level = levels[result.index][0];
         return result;
     });
 
@@ -95,7 +107,7 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
     points.erase(std::remove_if(points.begin(),
                               points.end(),
                               [roi](const Point &p){
-        return !roi.contains(p.location);
+        return !roi.contains(p.location) || (p.level < 5000);
     }), points.end());
 
 
@@ -107,7 +119,7 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
         for(int i = 1; i < points.count(); ++i){
             clusters.last().append(lastPoint);
             QLineF line(lastPoint.location, points[i].location);
-            if(line.length() > 50){
+            if(line.length() > maxGrouping){
                 clusters << PointCluster();
             }
             lastPoint = points[i];
@@ -118,15 +130,15 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
     // Filter clusters with less than 10 points
     clusters.erase(std::remove_if(clusters.begin(),
                               clusters.end(),
-                              [](const PointCluster &c){
-        return c.count() < 20;
+                              [minGroupCount](const PointCluster &c){
+        return c.count() < minGroupCount;
     }), clusters.end());
 
 
     QStringList pileText;
     for(int i =0; i < clusters.count(); ++i){
         QRect rect = clusters[i].boundingRect().toRect();
-        rect.setTop(-maxLength);
+        rect.setTop(-maxLength - 30);
         plotter->addSquare(rect, Qt::blue);
         plotter->addText(QString("%1").arg(i+1)
                          , rect.center() + QPoint(0, (rect.height() /2.0) + 50)
