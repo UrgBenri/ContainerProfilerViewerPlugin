@@ -1,3 +1,6 @@
 [submodule "PluginInterface"]
 	path = PluginInterface
 	url = https://github.com/UrgBenri/PluginInterface.git
+[submodule "UrgDrawWidget"]
+	path = UrgDrawWidget
+	url = https://github.com/UrgBenri/UrgDrawWidget.git
