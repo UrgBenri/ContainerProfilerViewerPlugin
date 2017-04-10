@@ -143,7 +143,7 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
         plotter->addText(QString("%1").arg(i+1)
                          , rect.center() + QPoint(0, (rect.height() /2.0) + 50)
                          , Qt::black
-                         , 24);
+                         , 72);
         plotter->addLine(QLineF(rect.center() + QPoint(0, (rect.height() /2.0) + 30), rect.center() - QPoint(0, (rect.height() /2.0) + 30))
                          , 2
                          , Qt::red);
