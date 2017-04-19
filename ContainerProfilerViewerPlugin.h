@@ -23,6 +23,7 @@
 
 #include <QWidget>
 #include "ViewerPluginInterface.h"
+#include "SettingsModel.h"
 
 using namespace std;
 
@@ -77,6 +78,13 @@ private slots:
 
 private:
     Ui::ContainerProfilerViewerPlugin* ui;
+    SettingsModel *m_settingsModel;
+    int m_minLength;
+    int m_maxLength;
+    int m_width;
+    int m_maxGrouping;
+    int m_minGroupCount;
+    int m_minLevel;
 };
 
 #endif // CONTAINERPROFILER_H

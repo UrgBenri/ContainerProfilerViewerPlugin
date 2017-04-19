@@ -34,6 +34,7 @@
 ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
     : ViewerPluginInterface(parent)
     , ui(new Ui::ContainerProfilerViewerPlugin)
+    , m_settingsModel(new SettingsModel(this))
 {
     ui->setupUi(this);
 
@@ -47,6 +48,24 @@ ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
     ui->plotViewer->setRangePointSize(1);
     ui->plotViewer->setRangeShow(0, true);
     ui->plotViewer->setRotationOffset(180);
+
+    m_minLength = 100;
+    m_maxLength = 1485;
+    m_width = 695 *2;
+    m_maxGrouping = 15;
+    m_minGroupCount = 20;
+    m_minLevel = 5000;
+
+    m_settingsModel->append("Min Length", 100, [this](const QVariant &value){m_minLength = value.toInt();});
+    m_settingsModel->append("Max Length", 1485, [this](const QVariant &value){m_maxLength = value.toInt();});
+    m_settingsModel->append("Width", 695 *2, [this](const QVariant &value){m_width = value.toInt();});
+    m_settingsModel->append("Max Grouping", 15, [this](const QVariant &value){m_maxGrouping = value.toInt();});
+    m_settingsModel->append("Min Group Count", 20, [this](const QVariant &value){m_minGroupCount = value.toInt();});
+    m_settingsModel->append("Min Level", 5000, [this](const QVariant &value){m_minLevel = value.toInt();});
+
+    ui->settings->horizontalHeader()->setStretchLastSection(true);
+
+    ui->settings->setModel(m_settingsModel);
 
     connect(ui->plotViewer, &UrgDrawWidget::positionClicked,
             this, &ContainerProfilerViewerPlugin::orthoMouseClicked);
@@ -70,11 +89,12 @@ void ContainerProfilerViewerPlugin::orthoMouseClicked(bool state, long x, long y
 
 void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const PluginDataStructure &data)
 {
-    int minLength = 100;
-    int maxLength = 1485;
-    int width = 695 *2;
-    int maxGrouping = 15;
-    int minGroupCount = 20;
+    int minLength = m_minLength;
+    int maxLength = m_maxLength;
+    int width = m_width;
+    int maxGrouping = m_maxGrouping;
+    int minGroupCount = m_minGroupCount;
+    int minLevel = m_minLevel;
     UrgDrawWidget *plotter =  ui->plotViewer;
 
 
@@ -106,8 +126,8 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
     // Filter point within the ROI
     points.erase(std::remove_if(points.begin(),
                               points.end(),
-                              [roi](const Point &p){
-        return !roi.contains(p.location) || (p.level < 5000);
+                              [roi, minLevel](const Point &p){
+        return !roi.contains(p.location) || (p.level < minLevel);
     }), points.end());
 
 
@@ -147,7 +167,7 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
         plotter->addLine(QLineF(rect.center() + QPoint(0, (rect.height() /2.0) + 30), rect.center() - QPoint(0, (rect.height() /2.0) + 30))
                          , 2
                          , Qt::red);
-        pileText << QString("Number:%1\tHeight:%2\tWidth:%3\tCenter:%4")
+        pileText << QString("%1:\tHeight:%2\tWidth:%3\tCenter:%4")
                     .arg(i +1)
                     .arg(rect.height())
                     .arg(rect.width())

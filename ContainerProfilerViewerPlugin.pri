@@ -35,3 +35,9 @@
             $$PWD/i18n/plugin_en.ts \
             $$PWD/i18n/plugin_ja.ts
 }
+
+HEADERS += \
+    $$PWD/SettingsModel.h
+
+SOURCES += \
+    $$PWD/SettingsModel.cpp
