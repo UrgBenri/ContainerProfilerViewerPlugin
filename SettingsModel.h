@@ -25,6 +25,8 @@ public:
     void append(const QString &key
                 , const QVariant &value
                 , std::function<void(const QVariant &)> func = Q_NULLPTR);
+    void setValue(const QString &key
+                  , const QVariant &value);
 
 signals:
     void valueChanged(const QString &key, const QVariant &value);

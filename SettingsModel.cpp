@@ -79,3 +79,15 @@ void SettingsModel::append(const QString &key
     m_data << data;
     endInsertRows();
 }
+
+void SettingsModel::setValue(const QString &key, const QVariant &value)
+{
+    auto valueIt = std::find_if(m_data.begin(), m_data.end(), [key](const data_t &data){
+        return data.title == key;
+    });
+    if(valueIt){
+        valueIt->value = value;
+        int pos = valueIt - m_data.begin();
+        dataChanged(index(pos, 0), index(pos, 0));
+    }
+}

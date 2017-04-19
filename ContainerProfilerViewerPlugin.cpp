@@ -210,10 +210,30 @@ ContainerProfilerViewerPlugin::~ContainerProfilerViewerPlugin()
 
 void ContainerProfilerViewerPlugin::saveState(QSettings &settings)
 {
+    settings.setValue("minLength", m_minLength);
+    settings.setValue("maxLength",  m_maxLength);
+    settings.setValue("width", m_width);
+    settings.setValue("maxGrouping", m_maxGrouping);
+    settings.setValue("minGroupCount", m_minGroupCount);
+    settings.setValue("minLevel", m_minLevel);
 }
 
 void ContainerProfilerViewerPlugin::restoreState(QSettings &settings)
 {
+    m_minLength = settings.value("minLength", 100).toInt();
+    m_maxLength = settings.value("maxLength", 1485).toInt();
+    m_width = settings.value("width", 695 *2).toInt();
+    m_maxGrouping = settings.value("maxGrouping", 15).toInt();
+    m_minGroupCount = settings.value("minGroupCount", 20).toInt();
+    m_minLevel = settings.value("minLevel", 5000).toInt();
+
+    m_settingsModel->setValue("Min Length", m_minLength);
+    m_settingsModel->setValue("Max Length", m_maxLength);
+    m_settingsModel->setValue("Width", m_width);
+    m_settingsModel->setValue("Max Grouping", m_maxGrouping);
+    m_settingsModel->setValue("Min Group Count", m_minGroupCount);
+    m_settingsModel->setValue("Min Level", m_minLevel);
+
 }
 
 void ContainerProfilerViewerPlugin::loadTranslator(const QString &locale)
