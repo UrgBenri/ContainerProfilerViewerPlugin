@@ -24,6 +24,7 @@ public:
 
     void append(const QString &key
                 , const QVariant &value
+                , const QString &tooltip
                 , std::function<void(const QVariant &)> func = Q_NULLPTR);
     void setValue(const QString &key
                   , const QVariant &value);
@@ -36,6 +37,7 @@ private:
         QString title;
         QVariant value;
         std::function<void(const QVariant &)> func;
+        QString tooltip;
     } data_t;
     QVector<data_t> m_data;
 };

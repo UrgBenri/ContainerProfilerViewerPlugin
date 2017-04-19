@@ -42,7 +42,7 @@ public:
     explicit ContainerProfilerViewerPlugin(QWidget* parent = 0);
     virtual ~ContainerProfilerViewerPlugin();
 
-    QString pluginName() const { return tr("Contaner Profiler"); }
+    QString pluginName() const { return tr("Container Profiler"); }
     QIcon pluginIcon() const{ return QIcon(":/ContainerProfilerViewerPlugin/tabIcon"); }
     QString pluginDescription() const {return tr("Container Profiter");}
     PluginVersion pluginVersion() const {return PluginVersion(1, 0, 0);}

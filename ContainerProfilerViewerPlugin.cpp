@@ -56,12 +56,12 @@ ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
     m_minGroupCount = 20;
     m_minLevel = 5000;
 
-    m_settingsModel->append("Min Length", 100, [this](const QVariant &value){m_minLength = value.toInt();});
-    m_settingsModel->append("Max Length", 1485, [this](const QVariant &value){m_maxLength = value.toInt();});
-    m_settingsModel->append("Width", 695 *2, [this](const QVariant &value){m_width = value.toInt();});
-    m_settingsModel->append("Max Grouping", 15, [this](const QVariant &value){m_maxGrouping = value.toInt();});
-    m_settingsModel->append("Min Group Count", 20, [this](const QVariant &value){m_minGroupCount = value.toInt();});
-    m_settingsModel->append("Min Level", 5000, [this](const QVariant &value){m_minLevel = value.toInt();});
+    m_settingsModel->append("Min Length", 100, "The minimum distance from the sensor", [this](const QVariant &value){m_minLength = value.toInt();});
+    m_settingsModel->append("Max Length", 1485, "The maximum distance from the sensor", [this](const QVariant &value){m_maxLength = value.toInt();});
+    m_settingsModel->append("Width", 695 *2, "Distance to the left pole", [this](const QVariant &value){m_width = value.toInt();});
+    m_settingsModel->append("Max Grouping", 15, "Distance between consecutive steps", [this](const QVariant &value){m_maxGrouping = value.toInt();});
+    m_settingsModel->append("Min Group Count", 20, "Minimum setps hitting one object", [this](const QVariant &value){m_minGroupCount = value.toInt();});
+    m_settingsModel->append("Min Level", 5000, "Level threashold to discrimate false positives", [this](const QVariant &value){m_minLevel = value.toInt();});
 
     ui->settings->horizontalHeader()->setStretchLastSection(true);
 

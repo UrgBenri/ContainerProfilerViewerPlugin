@@ -24,10 +24,12 @@ int SettingsModel::columnCount(const QModelIndex &parent) const
 
 QVariant SettingsModel::data(const QModelIndex &index, int role) const
 {
-    if(role == Qt::DisplayRole || role == Qt::EditRole)
-      {
+    if(role == Qt::DisplayRole || role == Qt::EditRole){
        return m_data[index.row()].value;
       }
+    else if(role == Qt::ToolTipRole){
+        return m_data[index.row()].tooltip;
+    }
     return QVariant::Invalid;
 }
 
@@ -55,6 +57,10 @@ QVariant SettingsModel::headerData(int section, Qt::Orientation orientation, int
         else if(orientation == Qt::Vertical){
             return m_data[section].title;
         }
+    }else if(role == Qt::ToolTipRole){
+         if(orientation == Qt::Vertical){
+            return m_data[section].tooltip;
+        }
     }
 
     return QVariant::Invalid;
@@ -69,12 +75,14 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const
 
 void SettingsModel::append(const QString &key
                            , const QVariant &value
+                           , const QString &tooltip
                            , std::function<void(const QVariant &)> func)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     data_t data;
     data.title = key;
     data.value = value;
+    data.tooltip = tooltip;
     data.func = func;
     m_data << data;
     endInsertRows();
