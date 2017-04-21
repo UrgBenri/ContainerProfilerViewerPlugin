@@ -56,12 +56,30 @@ ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
     m_minGroupCount = 20;
     m_minLevel = 5000;
 
-    m_settingsModel->append("Min Length", 100, "The minimum distance from the sensor", [this](const QVariant &value){m_minLength = value.toInt();});
-    m_settingsModel->append("Max Length", 1485, "The maximum distance from the sensor", [this](const QVariant &value){m_maxLength = value.toInt();});
-    m_settingsModel->append("Width", 695 *2, "Distance to the left pole", [this](const QVariant &value){m_width = value.toInt();});
-    m_settingsModel->append("Max Grouping", 15, "Distance between consecutive steps", [this](const QVariant &value){m_maxGrouping = value.toInt();});
-    m_settingsModel->append("Min Group Count", 20, "Minimum setps hitting one object", [this](const QVariant &value){m_minGroupCount = value.toInt();});
-    m_settingsModel->append("Min Level", 5000, "Level threashold to discrimate false positives", [this](const QVariant &value){m_minLevel = value.toInt();});
+    m_settingsModel->append("Min Length"
+                            , 100
+                            , "The minimum distance from the sensor"
+                            , [this](const QVariant &value){m_minLength = value.toInt();});
+    m_settingsModel->append("Max Length"
+                            , 1485
+                            , "The maximum distance from the sensor"
+                            , [this](const QVariant &value){m_maxLength = value.toInt();});
+    m_settingsModel->append("Width"
+                            , 695 *2
+                            , "Distance to the left pole"
+                            , [this](const QVariant &value){m_width = value.toInt();});
+    m_settingsModel->append("Max Grouping"
+                            , 15
+                            , "Distance between consecutive steps"
+                            , [this](const QVariant &value){m_maxGrouping = value.toInt();});
+    m_settingsModel->append("Min Group Count"
+                            , 20
+                            , "Minimum setps hitting one object"
+                            , [this](const QVariant &value){m_minGroupCount = value.toInt();});
+    m_settingsModel->append("Min Level"
+                            , 5000
+                            , "Level threashold to discrimate false positives"
+                            , [this](const QVariant &value){m_minLevel = value.toInt();});
 
     ui->settings->horizontalHeader()->setStretchLastSection(true);
 
@@ -112,21 +130,23 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
     //convert point from 3D to 2D with first echo
     points.resize(rawPoints.size());
     QVector<QVector<long > > levels = data.levels;
-    std::transform(rawPoints.begin(), rawPoints.end(), points.begin()
-                   , [&rawPoints, levels](const QVector<QVector3D> &rawPoint) -> Point{
+    std::transform(rawPoints.begin()
+                   , rawPoints.end()
+                   , points.begin()
+                   , [rawPoints, levels](const QVector<QVector3D> &rawPoint) -> Point{
         Point result;
         if(rawPoint.size() > 0){
             result.location =  QPointF(rawPoint[0].x(), rawPoint[0].y());
         }
         result.index = std::find(rawPoints.begin(), rawPoints.end(), rawPoint) - rawPoints.begin();
-        result.level = levels[result.index][0];
+        result.level = result.index < levels.size() ? levels[result.index][0] : 0;
         return result;
     });
 
     // Filter point within the ROI
-    points.erase(std::remove_if(points.begin(),
-                              points.end(),
-                              [roi, minLevel](const Point &p){
+    points.erase(std::remove_if(points.begin()
+                                ,  points.end()
+                                , [roi, minLevel](const Point &p){
         return !roi.contains(p.location) || (p.level < minLevel);
     }), points.end());
 
@@ -147,20 +167,20 @@ void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const 
         clusters.last().append(lastPoint);
     }
 
-    // Filter clusters with less than 10 points
-    clusters.erase(std::remove_if(clusters.begin(),
-                              clusters.end(),
-                              [minGroupCount](const PointCluster &c){
+    // Filter clusters with less than minGroupCount points
+    clusters.erase(std::remove_if(clusters.begin()
+                                  , clusters.end()
+                                  , [minGroupCount](const PointCluster &c){
         return c.count() < minGroupCount;
     }), clusters.end());
 
 
     QStringList pileText;
-    for(int i =0; i < clusters.count(); ++i){
+    for(int i = 0; i < clusters.count(); ++i){
         QRect rect = clusters[i].boundingRect().toRect();
         rect.setTop(-maxLength - 30);
         plotter->addSquare(rect, Qt::blue);
-        plotter->addText(QString("%1").arg(i+1)
+        plotter->addText(QString("%1").arg(i +1)
                          , rect.center() + QPoint(0, (rect.height() /2.0) + 50)
                          , Qt::black
                          , 72);
@@ -233,7 +253,6 @@ void ContainerProfilerViewerPlugin::restoreState(QSettings &settings)
     m_settingsModel->setValue("Max Grouping", m_maxGrouping);
     m_settingsModel->setValue("Min Group Count", m_minGroupCount);
     m_settingsModel->setValue("Min Level", m_minLevel);
-
 }
 
 void ContainerProfilerViewerPlugin::loadTranslator(const QString &locale)
