@@ -22,18 +22,20 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    void append(const QString &key
+    void append(int id
+                , const QString &key
                 , const QVariant &value
                 , const QString &tooltip
                 , std::function<void(const QVariant &)> func = Q_NULLPTR);
-    void setValue(const QString &key
+    void setValue(int id
                   , const QVariant &value);
 
 signals:
-    void valueChanged(const QString &key, const QVariant &value);
+    void valueChanged(int id, const QVariant &value);
 
 private:
     typedef struct {
+        int id;
         QString title;
         QVariant value;
         std::function<void(const QVariant &)> func;

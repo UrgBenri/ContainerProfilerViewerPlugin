@@ -56,27 +56,33 @@ ContainerProfilerViewerPlugin::ContainerProfilerViewerPlugin(QWidget* parent)
     m_minGroupCount = 20;
     m_minLevel = 5000;
 
-    m_settingsModel->append("Min Length"
+    m_settingsModel->append(0
+                            , "Min Length"
                             , 100
                             , "The minimum distance from the sensor"
                             , [this](const QVariant &value){m_minLength = value.toInt();});
-    m_settingsModel->append("Max Length"
+    m_settingsModel->append(1
+                            , "Max Length"
                             , 1485
                             , "The maximum distance from the sensor"
                             , [this](const QVariant &value){m_maxLength = value.toInt();});
-    m_settingsModel->append("Width"
+    m_settingsModel->append(2
+                            , "Width"
                             , 695 *2
                             , "Distance to the left pole"
                             , [this](const QVariant &value){m_width = value.toInt();});
-    m_settingsModel->append("Max Grouping"
+    m_settingsModel->append(3
+                            , "Max Grouping"
                             , 15
                             , "Distance between consecutive steps"
                             , [this](const QVariant &value){m_maxGrouping = value.toInt();});
-    m_settingsModel->append("Min Group Count"
+    m_settingsModel->append(4
+                            , "Min Group Count"
                             , 20
                             , "Minimum setps hitting one object"
                             , [this](const QVariant &value){m_minGroupCount = value.toInt();});
-    m_settingsModel->append("Min Level"
+    m_settingsModel->append(5
+                            , "Min Level"
                             , 5000
                             , "Level threashold to discrimate false positives"
                             , [this](const QVariant &value){m_minLevel = value.toInt();});
@@ -103,7 +109,6 @@ void ContainerProfilerViewerPlugin::orthoMouseClicked(bool state, long x, long y
         emit selectedStepChanged(step);
     }
 }
-
 
 void ContainerProfilerViewerPlugin::addMeasurementData(const QString &id, const PluginDataStructure &data)
 {
@@ -247,12 +252,12 @@ void ContainerProfilerViewerPlugin::restoreState(QSettings &settings)
     m_minGroupCount = settings.value("minGroupCount", 20).toInt();
     m_minLevel = settings.value("minLevel", 5000).toInt();
 
-    m_settingsModel->setValue("Min Length", m_minLength);
-    m_settingsModel->setValue("Max Length", m_maxLength);
-    m_settingsModel->setValue("Width", m_width);
-    m_settingsModel->setValue("Max Grouping", m_maxGrouping);
-    m_settingsModel->setValue("Min Group Count", m_minGroupCount);
-    m_settingsModel->setValue("Min Level", m_minLevel);
+    m_settingsModel->setValue(0, m_minLength);
+    m_settingsModel->setValue(1, m_maxLength);
+    m_settingsModel->setValue(2, m_width);
+    m_settingsModel->setValue(3, m_maxGrouping);
+    m_settingsModel->setValue(4,  m_minGroupCount);
+    m_settingsModel->setValue(5, m_minLevel);
 }
 
 void ContainerProfilerViewerPlugin::loadTranslator(const QString &locale)

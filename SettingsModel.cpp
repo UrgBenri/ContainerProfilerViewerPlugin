@@ -39,7 +39,7 @@ bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int
     {
         m_data[index.row()].value = value;
         emit dataChanged(index, index);
-        emit valueChanged(m_data[index.row()].title, m_data[index.row()].value);
+        emit valueChanged(m_data[index.row()].id, m_data[index.row()].value);
         if(m_data[index.row()].func){
             m_data[index.row()].func(value);
         }
@@ -73,13 +73,15 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const
     return flags;
 }
 
-void SettingsModel::append(const QString &key
+void SettingsModel::append(int id
+                           , const QString &key
                            , const QVariant &value
                            , const QString &tooltip
                            , std::function<void(const QVariant &)> func)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     data_t data;
+    data.id = id;
     data.title = key;
     data.value = value;
     data.tooltip = tooltip;
@@ -88,10 +90,10 @@ void SettingsModel::append(const QString &key
     endInsertRows();
 }
 
-void SettingsModel::setValue(const QString &key, const QVariant &value)
+void SettingsModel::setValue(int id, const QVariant &value)
 {
-    auto valueIt = std::find_if(m_data.begin(), m_data.end(), [key](const data_t &data){
-        return data.title == key;
+    auto valueIt = std::find_if(m_data.begin(), m_data.end(), [id](const data_t &data){
+        return data.id == id;
     });
     if(valueIt){
         valueIt->value = value;
